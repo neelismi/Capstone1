@@ -1,17 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+const express = require('express')
+const app = express()
+const port = 3000
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const mysql = require('mysql');
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const con = mysql.createConnection({
+    host: "web-scraper.c78qxjw1gccg.us-east-2.rds.amazonaws.com",
+    user: "admin",
+    password: "Capstone2020"
+});
+
+
+
+app.get('', (req, res) => {
+    con.connect(function(err) {
+        con.query(`SELECT * FROM Capstone.scrape_results`, function(err, result, fields) {
+            if (err) res.send(err);
+            if (result) res.send(result[0]["TextFound"]);
+        });
+    });
+});
+
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+  })
+
+;
